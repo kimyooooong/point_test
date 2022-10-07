@@ -3,9 +3,12 @@ package point.test;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import point.test.common.Const;
 import point.test.domain.Member;
 import point.test.repository.MemberRepository;
 import point.test.service.MemberService;
+
+import javax.transaction.Transactional;
 
 @SpringBootTest
 class PointTestApplicationTests {
@@ -17,9 +20,11 @@ class PointTestApplicationTests {
     MemberService memberService;
 
     @Test
+    @Transactional
     void contextLoads() {
 
-        memberRepository.save(new Member());
+       Member member = memberService.getMember(Const.TEST_MEMBER_ID);
+       System.out.println(member);
 
 
 

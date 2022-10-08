@@ -20,47 +20,59 @@ public class PointController {
 
     private final PointService pointService;
 
-    @GetMapping("/{id}/points")
+    @GetMapping("/{memberId}/points")
     public ResponseEntity<RestResponse> getPoints(
-            @PathVariable Long id,
+            @PathVariable Long memberId,
             @RequestParam(value = "kind") PointKind kind,
             @RequestParam(value = "page") Integer page,
             @RequestParam(value = "size") Integer size
 
     ){
         //PageRequest 에선 offset 이 0 부터 들어가므로  page -1 .
-        return ResponseEntity.ok(RestResponse.ok(pointService.getPointHistory(id , kind , PageRequest.of(page-1 , size ))));
+        return ResponseEntity.ok(RestResponse.ok(pointService.getPointHistory(memberId , kind , PageRequest.of(page-1 , size ))));
     }
 
-    @GetMapping("/{id}/points/totals")
+    @GetMapping("/{memberId}/points/totals")
     public ResponseEntity<RestResponse> getPointsTotal(
-            @PathVariable Long id){
+            @PathVariable Long memberId){
 
-        id = Const.TEST_MEMBER_ID; //멤버 아이디는 테스트아이디로 고정.
+        memberId = Const.TEST_MEMBER_ID; //멤버 아이디는 테스트아이디로 고정.
 
-        return ResponseEntity.ok(RestResponse.ok(pointService.getTotalPoint(id)));
+        return ResponseEntity.ok(RestResponse.ok(pointService.getTotalPoint(memberId)));
     }
 
-    @PostMapping("/{id}/points/save")
+    @PostMapping("/{memberId}/points/save")
     public ResponseEntity<RestResponse> savePoint(
-            @PathVariable Long id,
+            @PathVariable Long memberId,
             @RequestBody PointForm pointForm){
 
-        id = Const.TEST_MEMBER_ID; //멤버 아이디는 테스트아이디로 고정.
+        memberId = Const.TEST_MEMBER_ID; //멤버 아이디는 테스트아이디로 고정.
 
-        pointService.savePoint(id , pointForm.getAmount() , pointForm.getDesc());
+        pointService.savePoint(memberId , pointForm.getAmount() , pointForm.getDesc());
 
         return ResponseEntity.ok(RestResponse.ok());
     }
 
-    @PostMapping("/{id}/points/using")
+    @PostMapping("/{memberId}/points/using")
     public ResponseEntity<RestResponse> usingPoint(
-            @PathVariable Long id,
+            @PathVariable Long memberId,
             @RequestBody PointForm pointForm) {
 
-        id = Const.TEST_MEMBER_ID; //멤버 아이디는 테스트아이디로 고정.
+        memberId = Const.TEST_MEMBER_ID; //멤버 아이디는 테스트아이디로 고정.
 
-        pointService.usingPoint(id, pointForm.getAmount(), pointForm.getDesc());
+        pointService.usingPoint(memberId, pointForm.getAmount(), pointForm.getDesc());
+
+        return ResponseEntity.ok(RestResponse.ok());
+    }
+
+    @PostMapping("/{memberId}/points/{pointId}/cancel")
+    public ResponseEntity<RestResponse> usingCancelPoint(
+            @PathVariable Long memberId
+            ,@PathVariable Long pointId) {
+
+        memberId = Const.TEST_MEMBER_ID; //멤버 아이디는 테스트아이디로 고정.
+
+        pointService.cancelPoint(memberId, pointId);
 
         return ResponseEntity.ok(RestResponse.ok());
     }

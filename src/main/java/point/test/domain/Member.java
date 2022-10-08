@@ -25,6 +25,5 @@ public class Member extends CommonEntity{
 //    private Long point;
 
     @OneToMany(mappedBy = "member" , fetch = FetchType.LAZY)
-    @JsonManagedReference
     private List<PointHistory> points = new ArrayList<>();
 }

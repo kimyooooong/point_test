@@ -30,12 +30,17 @@ public class PointHistory extends CommonEntity{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name ="member_id")
+    @JsonBackReference
     private Member member;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "pointUseHistory" , fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<PointHistoryDetail> pointUseHistories;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "pointSaveHistory" , fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<PointHistoryDetail> pointSaveHistories;
 
 

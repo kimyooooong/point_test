@@ -11,7 +11,7 @@ import point.test.service.MemberService;
 import javax.transaction.Transactional;
 
 @SpringBootTest
-class PointTestApplicationTests {
+class ServiceTestApplicationTests {
 
     @Autowired
     MemberRepository memberRepository;

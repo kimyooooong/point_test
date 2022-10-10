@@ -156,10 +156,10 @@ public class PointService {
      * @param memberId
      * @param pointId
      */
+    @Transactional
     public void cancelPoint(Long memberId , Long pointId){
 
         Optional<PointHistory> pointHistoryOptional = pointRepository.findById(pointId);
-
 
 
         //포인트 사용 정보가 없다면.

@@ -1,5 +1,6 @@
 package point.test.controller;
 
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +21,7 @@ public class PointController {
 
     private final PointService pointService;
 
+    @ApiOperation("포인트 사용/적립 내역")
     @GetMapping("/{memberId}/points")
     public ResponseEntity<RestResponse> getPoints(
             @PathVariable Long memberId,
@@ -28,19 +30,22 @@ public class PointController {
             @RequestParam(value = "size") Integer size
 
     ){
+
+        memberId = Const.TEST_MEMBER_ID; //멤버 아이디는 테스트아이디로 고정.
+
         //PageRequest 에선 offset 이 0 부터 들어가므로  page -1 .
         return ResponseEntity.ok(RestResponse.ok(pointService.getPointHistory(memberId , kind , PageRequest.of(page-1 , size ))));
     }
-
+    @ApiOperation("현재 포인트 총합")
     @GetMapping("/{memberId}/points/totals")
     public ResponseEntity<RestResponse> getPointsTotal(
             @PathVariable Long memberId){
 
         memberId = Const.TEST_MEMBER_ID; //멤버 아이디는 테스트아이디로 고정.
 
-        return ResponseEntity.ok(RestResponse.ok(pointService.getTotalPoint(memberId)));
+        return ResponseEntity.ok(RestResponse.ok(pointService.getCurrentTotalPoint(memberId)));
     }
-
+    @ApiOperation("포인트 사용 적립 API")
     @PostMapping("/{memberId}/points/save")
     public ResponseEntity<RestResponse> savePoint(
             @PathVariable Long memberId,
@@ -53,6 +58,7 @@ public class PointController {
         return ResponseEntity.ok(RestResponse.ok());
     }
 
+    @ApiOperation("포인트 사용 API")
     @PostMapping("/{memberId}/points/using")
     public ResponseEntity<RestResponse> usingPoint(
             @PathVariable Long memberId,
@@ -64,7 +70,7 @@ public class PointController {
 
         return ResponseEntity.ok(RestResponse.ok());
     }
-
+    @ApiOperation("포인트 사용 취소 API - 사용한 내역 기반")
     @PostMapping("/{memberId}/points/{pointId}/cancel")
     public ResponseEntity<RestResponse> usingCancelPoint(
             @PathVariable Long memberId

@@ -30,7 +30,7 @@ public class SwaggerConfig {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("API Swagger")
-                .description("API DOC")
+                .description("멤버 테스트 아이디 -> 1 을 사용하면 됩니다.")
                 .version("0.01")
                 .build();
     }

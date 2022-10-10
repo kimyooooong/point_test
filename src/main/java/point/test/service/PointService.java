@@ -13,6 +13,7 @@ import point.test.enums.PointKind;
 import point.test.repository.PointRepository;
 import point.test.repository.PointDetailRepository;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,21 +30,29 @@ public class PointService {
 
     private final MemberService memberService;
 
+    private final EntityManager entityManager;
+
+    /**
+     * 포인트 사용/적립 내역
+     * @param memberId
+     * @param kind
+     * @param pageable
+     * @return
+     */
     public Page<PointHistory> getPointHistory(Long memberId , PointKind kind ,Pageable pageable){
 
         Member member = memberService.getMember(memberId);
         return pointRepository.findAllByKindAndMemberOrderByCreatedDateDesc( kind , member , pageable);
     }
 
-    public Long getTotalPoint(Long memberId){
-        return getCurrentPoint(memberId);
-    }
-
-
-    public Long getCurrentPoint(Long memberId){
+    /**
+     * 현재 토탈 포인트.
+     * @param memberId
+     * @return
+     */
+    public Long getCurrentTotalPoint(Long memberId){
         //총 사용가능한 금액전부더해서 리턴.
-        List<PointHistory> pointSaveHistoryList = pointRepository.findAllPointCustomSql(memberId , PointKind.SAVE.toString());
-        return pointSaveHistoryList.stream().mapToLong(PointHistory::getUseAmount).sum();
+        return pointRepository.findAllPointCustomSql(memberId , PointKind.SAVE.toString()).stream().mapToLong(PointHistory::getUseAmount).sum();
     }
 
     /**
@@ -60,8 +69,6 @@ public class PointService {
         }
 
         Member member = memberService.getMember(memberId);
-
-        log.info("member : {}" , member);
 
         //포인트 히스토리 기록.
         pointRepository.save(PointHistory.builder()
@@ -86,9 +93,7 @@ public class PointService {
 
         Member member = memberService.getMember(memberId);
 
-        Long getCurrentPoint = getCurrentPoint(memberId);
-
-        log.info("getCurrentPoint : {}" , getCurrentPoint);
+        Long getCurrentPoint = getCurrentTotalPoint(memberId);
 
         if(amount <= 0){
             throw new ServiceException("포인트 적립은 0 또는 - 가 될 수 없습니다.");
@@ -146,30 +151,42 @@ public class PointService {
         pointDetailRepository.saveAll(pointUseHistories);
     }
 
+    /**
+     * 포인트 취소
+     * @param memberId
+     * @param pointId
+     */
     public void cancelPoint(Long memberId , Long pointId){
-        Member member = memberService.getMember(memberId);
 
         Optional<PointHistory> pointHistoryOptional = pointRepository.findById(pointId);
+
+
 
         //포인트 사용 정보가 없다면.
         if(pointHistoryOptional.isEmpty()){
             throw new ServiceException("포인트 사용 정보가 존재하지 않습니다.");
-            // 포인트 사용이아니라면.
+
         } else {
+
+            // 포인트 사용이아니라면.
             if(!pointHistoryOptional.get().getKind().equals(PointKind.USE)){
                 throw new ServiceException("포인트 사용 정보가 아닙니다.");
             }
 
+
+            log.info(pointHistoryOptional.get());
+
             PointHistory pointHistory = pointHistoryOptional.get();
 
-            //취소 내역을 가져옴.
+            //사용 내역을 가져 옴.
             List<PointHistoryDetail> pointHistoryDetails = pointDetailRepository.findAllByPointUseHistory(pointHistory);
 
-            //다시 돌림.
+            //사용 내역 기반으로 포인트 적립부분을 다시 롤백.
             pointHistoryDetails.forEach(c-> pointRepository.updateUseAmountByPointId(c.getPointSaveHistory().getPointId() , c.getAmount()));
 
+            entityManager.flush();
+            entityManager.clear();
         }
-
 
     }
 

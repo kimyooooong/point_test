@@ -38,6 +38,6 @@ git clone https://github.com/kimyooooong/point_test.git
 
 ### /result 폴더에 point_test.jar 실행
 ```
-cd result
+cd point_test/result
 java -jar point_test.jar
 ```

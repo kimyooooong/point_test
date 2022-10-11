@@ -5,8 +5,6 @@ import org.springframework.stereotype.Service;
 import point.test.domain.Member;
 import point.test.repository.MemberRepository;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class MemberService {

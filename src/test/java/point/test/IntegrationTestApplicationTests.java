@@ -221,7 +221,6 @@ class IntegrationTestApplicationTests {
         result = resultActions.andReturn();
         System.out.println(result.getResponse().getContentAsString());
 
-
         System.out.println("===========API_포인트_사용_적립_내역_테스트 종료============");
 
     }

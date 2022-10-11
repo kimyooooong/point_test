@@ -173,10 +173,15 @@ public class PointService {
                 throw new ServiceException("포인트 사용 정보가 아닙니다.");
             }
 
+            if(pointHistoryOptional.get().getCancelUse()){
+                throw new ServiceException("이미 취소한 포인트 내역 입니다.");
+            }
 
-            log.info(pointHistoryOptional.get());
 
+            //취소 시 재 취소 방지.
             PointHistory pointHistory = pointHistoryOptional.get();
+            pointHistory.setCancelUse(true);
+            pointRepository.save(pointHistory);
 
             //사용 내역을 가져 옴.
             List<PointHistoryDetail> pointHistoryDetails = pointDetailRepository.findAllByPointUseHistory(pointHistory);

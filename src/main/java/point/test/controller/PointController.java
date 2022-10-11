@@ -1,6 +1,7 @@
 package point.test.controller;
 
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.PageRequest;
@@ -23,6 +24,7 @@ public class PointController {
     @GetMapping("/{memberId}/points")
     public ResponseEntity<RestResponse> getPoints(
             @PathVariable Long memberId,
+            @ApiParam("KIND : SAVE -> 적립 내역 , USE -> 사용 내역")
             @RequestParam(value = "kind") PointKind kind,
             @RequestParam(value = "page") Integer page,
             @RequestParam(value = "size") Integer size
@@ -43,6 +45,7 @@ public class PointController {
     @PostMapping("/{memberId}/points/save")
     public ResponseEntity<RestResponse> savePoint(
             @PathVariable Long memberId,
+            @ApiParam("amount : 적립 할 포인트 , desc : 설명")
             @RequestBody PointForm pointForm){
 
         pointService.savePoint(memberId , pointForm.getAmount() , pointForm.getDesc());
@@ -54,6 +57,7 @@ public class PointController {
     @PostMapping("/{memberId}/points/using")
     public ResponseEntity<RestResponse> usingPoint(
             @PathVariable Long memberId,
+            @ApiParam("amount : 사용 할 포인트 , desc : 설명")
             @RequestBody PointForm pointForm) {
 
         pointService.usingPoint(memberId, pointForm.getAmount(), pointForm.getDesc());

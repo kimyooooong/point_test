@@ -2,6 +2,7 @@ package point.test.domain;
 
 import com.fasterxml.jackson.annotation.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import point.test.enums.PointKind;
 
 import javax.persistence.*;
@@ -28,6 +29,10 @@ public class PointHistory extends CommonEntity{
 
     private String desc;
 
+    @Setter
+    @JsonIgnore
+    private Boolean cancelUse;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name ="member_id")
     @JsonBackReference
@@ -51,6 +56,8 @@ public class PointHistory extends CommonEntity{
         this.amount=amount;
         this.useAmount=useAmount;
         this.member = member;
+        //default 값.
+        this.cancelUse = false;
     }
 
 }
